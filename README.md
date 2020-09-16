@@ -13,8 +13,9 @@ This is a debugging tool provided without warranty.  It offers no support from R
 # Deploy on a Red Hat OpenShift 4.X cluster
 - Assuming you have set values as desired in the `ocp4-collectl-deploy.yaml` file, create resources with:
 ```
-$ oc create -f ocp4-colletl-deploy.yaml
+$ oc create -f ocp4-collectl-deploy.yaml
 ```
+Be aware that this will launch the `collectl` pod across all nodes in your cluster.  If this is not desired, please use a NodeSelector in the DaemonSet portion of the template.
 
 # Remove from a Red Hat OpenShift 4.X cluster
 - To remove all resources relating to `ocp4-collectl` on your cluster, assuming you deployed with the above instructions, run:
@@ -23,7 +24,7 @@ $ oc delete all -l=app=ocp4-collectl; oc delete scc ocp4-collectl-scc; oc delete
 ```
 
 # Configuration
-By default, this DaemonSet mounts the node's /var/log/ directory and creates a /var/log/collectl directory which will fill with files as `collectl` runs.  These files are using default `collectl` settings as providing by the `collectl` package from (EPEL)[https://fedoraproject.org/wiki/EPEL].  A ConfigMap can be created and mounted over /etc/collectl.conf to alter configuration.  In addition, for more persistant storage or remote storage, feel free to remove the hostPath which is mounting in /var/log and use your own volume, but be aware; if you are troubleshooting and it potentially relies on volume-performance issues, you may either exacerbate the problem or cause new issues, as is true with any writing or reading to volumes with any application.
+By default, this DaemonSet mounts the node's /var/log/ directory and creates a /var/log/collectl directory which will fill with files as `collectl` runs.  These files are using default `collectl` settings as providing by the `collectl` package from [EPEL](https://fedoraproject.org/wiki/EPEL).  A ConfigMap can be created and mounted over /etc/collectl.conf to alter configuration.  In addition, for more persistant storage or remote storage, feel free to remove the hostPath which is mounting in /var/log and use your own volume, but be aware; if you are troubleshooting and it potentially relies on volume-performance issues, you may either exacerbate the problem or cause new issues, as is true with any writing or reading to volumes with any application.
 
 This container image is built using the `registry.access.redhat.com/ubi7/ubi` image and gets collectl from EPEL, and versioning of the container image matches the collectl version present in the image.
 
