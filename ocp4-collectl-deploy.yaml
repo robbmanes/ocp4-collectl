@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ocp4-collectl
+  labels:
+    app: ocp4-collectl
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ocp4-collectl-sa
+  namespace: ocp4-collectl
+  labels:
+    app: ocp4-collectl
+---
+allowHostDirVolumePlugin: true
+allowHostIPC: true
+allowHostNetwork: true
+allowHostPID: true
+allowHostPorts: true
+allowPrivilegeEscalation: true
+allowPrivilegedContainer: true
+allowedCapabilities:
+- '*'
+allowedUnsafeSysctls:
+- '*'
+apiVersion: security.openshift.io/v1
+fsGroup:
+  type: RunAsAny
+users:
+  - system:serviceaccount:ocp4-collectl:ocp4-collectl-sa
+kind: SecurityContextConstraints
+readOnlyRootFilesystem: false
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+seccompProfiles:
+- '*'
+metadata:
+  name: ocp4-collectl-scc
+  namespace: ocp4-collectl
+  labels:
+    app: ocp4-collectl
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ocp4-collectl-ds
+  namespace: ocp4-collectl
+  labels:
+    app: ocp4-collectl
+spec:
+  selector:
+    matchLabels:
+      name: ocp4-collectl
+  template:
+    metadata:
+      labels:
+        name: ocp4-collectl
+        app: ocp4-collectl
+    spec:
+      containers:
+      - name: ocp4-collectl
+        securityContext:
+          privileged: true
+        image: quay.io/robbmanes/ocp4-collectl:4.3.0-5.el7
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 400Mi
+          requests:
+            cpu: 100m
+            memory: 400Mi
+        env:
+          - name: NODENAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        volumeMounts:
+        - mountPath: /dev/mem
+          name: mem
+        - mountPath: /sys
+          name: sys
+        - mountPath: /var/log
+          name: logs
+        terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsUser: 0
+      hostPID: true
+      hostNetwork: true
+      hostIPC: true
+      volumes:
+      - name: mem
+        hostPath:
+          path: /dev/mem
+          type: CharDevice
+      - name: sys
+        hostPath:
+          path: /sys
+          type: Directory
+      - name: logs
+        hostPath:
+          path: /var/log
+          type: Directory
+      serviceAccount: ocp4-collectl-sa
+      serviceAccountName: ocp4-collectl-sa
