@@ -4,7 +4,7 @@ Run the `collectl` utility for performance monitoring and troubleshooting on Red
 # About
 The ocp4-collectl utility runs as a DaemonSet across your OpenShift 4.X cluster, allowing you gather per-node collectl reports.
 
-It runs as a privelged container in a DaemonSet, with full access to /proc, /sys, and /dev/mem, and with root access to the node.  It runs in its own security context, but has full privelged access as the root user.
+It runs as a privileged container in a DaemonSet, with full access to /proc, /sys, and /dev/mem, and with root access to the node.  It runs in its own security context, but has full privileged access as the root user.
 
 Each pod log will be from a different node, where it will track occurances of hung tasks and their respective stacks, along with timestamps.
 
