@@ -1,6 +1,8 @@
 # ocp4-collectl
 Run the `collectl` utility for performance monitoring and troubleshooting on Red Hat OpenShift 4 clusters.
 
+**This repository has been archived in favor of [openshift4-debug](https://github.com/robbmanes/openshift4-debug), which provides the same functionality.  Please use the newer set of utilities instead.**
+
 # About
 The ocp4-collectl utility runs as a DaemonSet across your OpenShift 4.X cluster, allowing you gather per-node collectl reports.
 
